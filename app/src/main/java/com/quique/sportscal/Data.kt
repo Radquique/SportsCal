@@ -10,7 +10,7 @@ import java.util.Locale
 
 // CAMBIA TU_USUARIO y TU_REPO por los tuyos de GitHub
 const val EVENTS_URL =
-    "https://raw.githubusercontent.com/TU_USUARIO/TU_REPO/main/app/src/main/assets/events.json"
+    "https://raw.githubusercontent.com/Radquique/SportCal/main/app/src/main/assets/events.json"
 
 data class Ev(
     val sport: String, val title: String, val start: OffsetDateTime,
