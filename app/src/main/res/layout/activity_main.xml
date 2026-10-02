@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:paddingTop="32dp">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="16dp" android:text="Mi Agenda Deportiva"
+        android:textSize="22sp" android:textStyle="bold" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:paddingLeft="8dp" android:paddingRight="8dp">
+        <Button android:id="@+id/bAll" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Todos" />
+        <Button android:id="@+id/bM" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barça M" />
+        <Button android:id="@+id/bF" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barça F" />
+    </LinearLayout>
+    <ListView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="match_parent" />
+</LinearLayout>

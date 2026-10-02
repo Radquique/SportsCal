@@ -1,0 +1,11 @@
+[
+  {"sport":"barca_f","title":"FC Barcelona – Real Madrid","start":"2026-10-04T17:00:00+02:00","comp":"Liga F","venue":"Spotify Camp Nou","tv":"DAZN, Movistar Plus+"},
+  {"sport":"barca_m","title":"FC Barcelona – Getafe","start":"2026-10-10T18:30:00+02:00","comp":"LaLiga · J8","venue":"Spotify Camp Nou","tv":"DAZN"},
+  {"sport":"barca_m","title":"Galatasaray – FC Barcelona","start":"2026-10-13T21:00:00+02:00","comp":"Champions League · J2","venue":"RAMS Park","tv":"Movistar Plus+"},
+  {"sport":"barca_m","title":"Real Betis – FC Barcelona","start":"2026-10-17T18:30:00+02:00","comp":"LaLiga · J9","venue":"La Cartuja, Sevilla","tv":"DAZN"},
+  {"sport":"barca_f","title":"Real Sociedad – FC Barcelona","start":"2026-10-18T12:00:00+02:00","comp":"Liga F","venue":"","tv":"DAZN"},
+  {"sport":"barca_m","title":"PSG – FC Barcelona","start":"2026-10-20T21:00:00+02:00","comp":"Champions League · J3","venue":"Parc des Princes","tv":"Por confirmar"},
+  {"sport":"barca_m","title":"FC Barcelona – Real Madrid","start":"2026-10-25T21:00:00+01:00","comp":"LaLiga · J10","venue":"Spotify Camp Nou","tv":"Por confirmar"},
+  {"sport":"barca_f","title":"FC Barcelona – Granada","start":"2026-10-25T17:00:00+01:00","comp":"Liga F","venue":"","tv":"DAZN, Teledeporte, Esport3"},
+  {"sport":"barca_f","title":"HB Køge – FC Barcelona","start":"2026-10-29T21:00:00+01:00","comp":"Champions League femenina","venue":"","tv":"Disney+"}
+]
