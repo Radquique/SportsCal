@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Mi Agenda Deportiva</string>
+    <string name="app_name">SportCal</string>
     <string name="widget_desc">Próximos eventos</string>
 </resources>

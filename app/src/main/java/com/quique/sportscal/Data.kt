@@ -10,15 +10,30 @@ import java.util.Locale
 
 // CAMBIA TU_USUARIO y TU_REPO por los tuyos de GitHub
 const val EVENTS_URL =
-    "https://raw.githubusercontent.com/Radquique/SportCal/main/app/src/main/assets/events.json"
+    "https://raw.githubusercontent.com/Radquique/SportsCal/main/app/src/main/assets/events.json"
+
+const val WINDOW_DAYS = 14L
 
 data class Ev(
     val sport: String, val title: String, val start: OffsetDateTime,
-    val comp: String, val venue: String, val tv: String
+    val comp: String, val venue: String, val tv: String, val tbc: Boolean
 ) {
-    fun tag() = if (sport == "barca_f") "♀" else "♂"
-    fun whenText(): String = start.atZoneSameInstant(ZoneId.of("Europe/Madrid"))
-        .format(DateTimeFormatter.ofPattern("EEE d MMM · HH:mm", Locale("es", "ES")))
+    fun isDaughter() = sport == "hija"
+    fun tag() = when (sport) {
+        "barca_m" -> "⚽♂"
+        "barca_f" -> "⚽♀"
+        "voley" -> "🏐"
+        "atle" -> "🏃"
+        "tri" -> "🏊"
+        "hija" -> "⭐🏐"
+        else -> "•"
+    }
+    fun whenText(): String {
+        val z = start.atZoneSameInstant(ZoneId.of("Europe/Madrid"))
+        val loc = Locale("es", "ES")
+        return if (tbc) z.format(DateTimeFormatter.ofPattern("EEE d MMM", loc)) + " · hora por confirmar"
+        else z.format(DateTimeFormatter.ofPattern("EEE d MMM · HH:mm", loc))
+    }
 }
 
 object Repo {
@@ -30,7 +45,7 @@ object Repo {
                 o.getString("sport"), o.getString("title"),
                 OffsetDateTime.parse(o.getString("start")),
                 o.optString("comp"), o.optString("venue"),
-                o.optString("tv", "Por confirmar")
+                o.optString("tv", ""), o.optBoolean("tbc", false)
             )
         }
     }
@@ -45,7 +60,10 @@ object Repo {
         } catch (e: Exception) { }
         val j = p.getString("json", null)
             ?: ctx.assets.open("events.json").bufferedReader().readText()
-        val limit = OffsetDateTime.now().minusHours(2)
-        return parse(j).filter { it.start.isAfter(limit) }.sortedBy { it.start }
+        val now = OffsetDateTime.now()
+        val limit = now.plusDays(WINDOW_DAYS)
+        return parse(j)
+            .filter { it.start.plusHours(if (it.tbc) 24 else 2).isAfter(now) && it.start.isBefore(limit) }
+            .sortedBy { it.start }
     }
 }

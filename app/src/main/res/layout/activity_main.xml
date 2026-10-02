@@ -3,13 +3,22 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical" android:paddingTop="32dp">
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:padding="16dp" android:text="Mi Agenda Deportiva"
+        android:padding="16dp" android:text="SportCal"
         android:textSize="22sp" android:textStyle="bold" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="horizontal" android:paddingLeft="8dp" android:paddingRight="8dp">
-        <Button android:id="@+id/bAll" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Todos" />
-        <Button android:id="@+id/bM" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barça M" />
-        <Button android:id="@+id/bF" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Barça F" />
-    </LinearLayout>
+    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:scrollbars="none">
+        <LinearLayout android:id="@+id/bar" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:paddingLeft="8dp" android:paddingRight="8dp">
+            <Button android:tag="all" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Todos" />
+            <Button android:tag="hija" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⭐ Hija" />
+            <Button android:tag="barca_m" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Barça M" />
+            <Button android:tag="barca_f" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Barça F" />
+            <Button android:tag="voley" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Voleibol" />
+            <Button android:tag="atle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Atletismo" />
+            <Button android:tag="tri" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Triatlón" />
+        </LinearLayout>
+    </HorizontalScrollView>
+    <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="24dp" android:textSize="15sp" android:text="No hay eventos en los próximos 14 días." />
     <ListView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="match_parent" />
 </LinearLayout>
