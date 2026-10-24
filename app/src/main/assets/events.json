@@ -1,17 +1,11 @@
 [
-  {"sport":"hija","title":"Titans Blau – CV Cerdanyola Verd","start":"2026-10-04T16:00:00+02:00","comp":"3a Div. Cadet Fem · Grup E · J2","venue":"ZEM La Guinardera, Sant Cugat (pista 3)","tv":""},
-  {"sport":"hija","title":"CV Cerdanyola Verd – Volei Molins Vermell","start":"2026-10-18T00:00:00+02:00","tbc":true,"comp":"3a Div. Cadet Fem · Grup E · J3","venue":"PEM Guiera (pista 1)","tv":""},
-  {"sport":"barca_f","title":"FC Barcelona – Real Madrid","start":"2026-10-04T17:00:00+02:00","comp":"Liga F","venue":"Spotify Camp Nou","tv":"DAZN, Movistar Plus+"},
-  {"sport":"tri","title":"Copa de Europa de Triatlón · Ceuta","start":"2026-10-04T00:00:00+02:00","tbc":true,"comp":"European Triathlon Cup","venue":"Ceuta","tv":"Por confirmar"},
-  {"sport":"barca_m","title":"FC Barcelona – Getafe","start":"2026-10-10T18:30:00+02:00","comp":"LaLiga · J8","venue":"Spotify Camp Nou","tv":"DAZN"},
-  {"sport":"tri","title":"Ironman World Championship (Kona)","start":"2026-10-10T00:00:00+02:00","tbc":true,"comp":"Ironman · hombres y mujeres","venue":"Kailua-Kona, Hawái","tv":"Por confirmar"},
-  {"sport":"atle","title":"Maratón de Chicago","start":"2026-10-11T00:00:00+02:00","tbc":true,"comp":"World Marathon Majors","venue":"Chicago, EE. UU.","tv":"Por confirmar"},
-  {"sport":"tri","title":"Copa de Europa de Triatlón · Tenerife","start":"2026-10-11T00:00:00+02:00","tbc":true,"comp":"European Triathlon Cup","venue":"Tenerife","tv":"Por confirmar"},
-  {"sport":"barca_m","title":"Galatasaray – FC Barcelona","start":"2026-10-13T21:00:00+02:00","comp":"Champions League · J2","venue":"RAMS Park, Estambul","tv":"Movistar Plus+"},
-  {"sport":"barca_m","title":"Real Betis – FC Barcelona","start":"2026-10-17T18:30:00+02:00","comp":"LaLiga · J9","venue":"La Cartuja, Sevilla","tv":"DAZN"},
-  {"sport":"barca_f","title":"Real Sociedad – FC Barcelona","start":"2026-10-18T12:00:00+02:00","comp":"Liga F","venue":"","tv":"DAZN"},
-  {"sport":"barca_m","title":"PSG – FC Barcelona","start":"2026-10-20T21:00:00+02:00","comp":"Champions League · J3","venue":"Parc des Princes, París","tv":"Por confirmar"},
-  {"sport":"barca_m","title":"FC Barcelona – Real Madrid","start":"2026-10-25T21:00:00+01:00","comp":"LaLiga · J10","venue":"Spotify Camp Nou","tv":"Por confirmar"},
-  {"sport":"barca_f","title":"FC Barcelona – Granada","start":"2026-10-25T17:00:00+01:00","comp":"Liga F","venue":"","tv":"DAZN, Teledeporte, Esport3"},
-  {"sport":"barca_f","title":"HB Køge – FC Barcelona","start":"2026-10-29T21:00:00+01:00","comp":"Champions League femenina","venue":"","tv":"Disney+"}
+  {"sport":"barca_f","title":"FC Barcelona – Granada","start":"2026-10-24T20:30:00+02:00","comp":"Liga F · J8","venue":"Estadi Johan Cruyff","tv":"Teledeporte, RTVE Play, DAZN, 3Cat","url":"https://www.laliga.com/clubes/fc-barcelona-femenino/proximos-partidos"},
+  {"sport":"hija","title":"AVA Ametlla Groc – CV Cerdanyola Verd","start":"2026-10-25T09:00:00+01:00","comp":"3a Div. Cadet Fem · Grup E · J4","venue":"Pavelló Municipal L'Ametlla del Vallès (pista 1)","tv":"","url":"https://resultadosvoleibol.isquad.es/equipo.php?seleccion=0&id_superficie=1&id_equipo=3017&id=4148"},
+  {"sport":"barca_m","title":"FC Barcelona – Real Madrid","start":"2026-10-25T21:00:00+01:00","comp":"LaLiga · J10","venue":"Spotify Camp Nou","tv":"DAZN","url":"https://www.laliga.com/clubes/fc-barcelona/proximos-partidos"},
+  {"sport":"barca_f","title":"HB Køge – FC Barcelona","start":"2026-10-29T21:00:00+01:00","comp":"Champions League femenina","venue":"Capelli Sport Stadion","tv":"Disney+","url":"https://www.futbolenlatv.es/equipo/fc-barcelona-femenino"},
+  {"sport":"barca_m","title":"FC Barcelona – Deportivo Alavés","start":"2026-10-31T21:00:00+01:00","comp":"LaLiga · J11","venue":"Spotify Camp Nou","tv":"Movistar LALIGA, Movistar Plus+, Orange Fútbol 1","url":"https://www.laliga.com/clubes/fc-barcelona/proximos-partidos"},
+  {"sport":"barca_f","title":"Badalona Women – FC Barcelona","start":"2026-11-01T12:30:00+01:00","comp":"Liga F · J9","venue":"Nou Municipal de Palamós","tv":"TV3, Teledeporte, RTVE Play, DAZN, 3Cat","url":"https://www.laliga.com/clubes/fc-barcelona-femenino/proximos-partidos"},
+  {"sport":"barca_m","title":"FC Barcelona – Aston Villa","start":"2026-11-03T21:00:00+01:00","comp":"Champions League · J4","venue":"Spotify Camp Nou","tv":"Movistar Liga de Campeones","url":"https://www.laliga.com/clubes/fc-barcelona/proximos-partidos"},
+  {"sport":"barca_f","title":"FC Barcelona – Madrid CFF","start":"2026-11-08T16:00:00+01:00","comp":"Liga F · J10","venue":"Estadi Johan Cruyff","tv":"Teledeporte, RTVE Play, DAZN, 3Cat","url":"https://www.laliga.com/clubes/fc-barcelona-femenino/proximos-partidos"},
+  {"sport":"barca_m","title":"Atlético de Madrid – FC Barcelona","start":"2026-11-08T21:00:00+01:00","comp":"LaLiga · J12","venue":"Riyadh Air Metropolitano","tv":"Movistar LALIGA","url":"https://www.laliga.com/clubes/fc-barcelona/proximos-partidos"}
 ]

@@ -1,12 +1,15 @@
 package com.quique.sportscal
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
+import android.widget.Toast
 import android.widget.ListView
 import android.widget.TextView
 
@@ -20,14 +23,27 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         lv = findViewById(R.id.list)
         lv.emptyView = findViewById(R.id.empty)
+        lv.setOnItemClickListener { _, _, pos, _ ->
+            val e = lv.adapter.getItem(pos) as Ev
+            if (e.url.isNotBlank()) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(e.url)))
+        }
         val bar = findViewById<LinearLayout>(R.id.bar)
         for (i in 0 until bar.childCount) {
             val b = bar.getChildAt(i)
             b.setOnClickListener { filter = b.tag as String; show() }
         }
+        findViewById<View>(R.id.btnRefresh).setOnClickListener { reload(true) }
+        reload(false)
+    }
+
+    private fun reload(notify: Boolean) {
         Thread {
             val l = Repo.load(this)
-            runOnUiThread { all = l; show() }
+            runOnUiThread {
+                all = l
+                show()
+                if (notify) Toast.makeText(this, "Actualizado", Toast.LENGTH_SHORT).show()
+            }
         }.start()
     }
 
@@ -42,7 +58,8 @@ class MainActivity : Activity() {
                 r.findViewById<TextView>(R.id.t2).text = e.whenText()
                 val place = listOf(e.comp, e.venue).filter { it.isNotBlank() }.joinToString(" · ")
                 val tv = if (e.tv.isBlank()) "" else "\n📺 ${e.tv}"
-                r.findViewById<TextView>(R.id.t3).text = place + tv
+                val link = if (e.url.isBlank()) "" else "\n🔗 Ver fuente"
+                r.findViewById<TextView>(R.id.t3).text = place + tv + link
                 return r
             }
         }
