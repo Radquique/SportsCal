@@ -69,22 +69,24 @@ def daughter():
     out = []
     for tr in soup.find_all("tr"):
         text = tr.get_text(" ", strip=True)
-        m = re.search(r"(\d{1,2}):(\d{2})\s+(\d{2})/(\d{2})/(\d{4})", text)
-        if not m or "Finalizado" in text or DAUGHTER_TEAM_ID not in str(tr):
+        m = re.search(r"(\d{2})/(\d{2})/(\d{4})\s+(\d{1,2}):(\d{2})", text)
+        if not m or "finalizado" in text.lower() or DAUGHTER_TEAM_ID not in str(tr):
             continue
         names = [a.get_text(" ", strip=True) for a in tr.find_all("a", href=re.compile("id_equipo="))
                  if a.get_text(strip=True)]
         if len(names) < 2:
             continue
         venue = ""
-        for a in tr.find_all("a", href=re.compile("google.com/maps")):
+        for a in tr.find_all("a", href="#"):
             raw = a.get_text(" ", strip=True)
+            if len(raw) < 4:
+                continue
             left, _, pista = raw.partition(" - ")
             venue = smart_case(dedupe(left))
             if pista:
                 venue += f" (pista {pista.replace('PISTA', '').strip()})"
             break
-        h, mi, d, mo, y = map(int, m.groups())
+        d, mo, y, h, mi = map(int, m.groups())
         out.append({
             "sport": "hija",
             "title": f"{smart_case(names[0])} – {smart_case(names[1])}",
