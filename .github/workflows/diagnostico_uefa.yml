@@ -1,0 +1,61 @@
+name: Diagnostico UEFA
+on:
+  workflow_dispatch:
+jobs:
+  diag:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright
+      - run: python -m playwright install --with-deps chromium
+      - name: Leer UEFA
+        run: |
+          cat > diag.py <<'PYEOF'
+          from playwright.sync_api import sync_playwright
+
+          URLS = {
+              "champions_masculina": "https://es.uefa.com/uefachampionsleague/standings/",
+              "champions_femenina": "https://es.uefa.com/womenschampionsleague/standings/",
+          }
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              ctx = browser.new_context(locale="es-ES", timezone_id="Europe/Madrid",
+                                        viewport={"width": 1280, "height": 2000})
+              for name, url in URLS.items():
+                  out = [f"URL: {url}"]
+                  try:
+                      page = ctx.new_page()
+                      page.goto(url, wait_until="networkidle", timeout=90000)
+                      for txt in ["Aceptar todas", "Aceptar", "Accept all", "Accept"]:
+                          try:
+                              page.get_by_role("button", name=txt).first.click(timeout=2000)
+                              break
+                          except Exception:
+                              pass
+                      page.wait_for_timeout(8000)
+                      out.append("TITLE: " + page.title())
+                      rows = page.eval_on_selector_all(
+                          "table tr", r"els => els.map(e => e.innerText.replace(/\s+/g,' ').trim())")
+                      out.append(f"FILAS DE TABLA ({len(rows)}):")
+                      out += rows[:60]
+                      out.append("TEXTO DE LA PAGINA:")
+                      out.append(page.inner_text("body")[:12000])
+                  except Exception as ex:
+                      out.append(f"ERROR: {ex}")
+                  text = "\n".join(out)
+                  print("=" * 30, name, "=" * 30)
+                  print(text[:6000])
+                  with open(f"diag_{name}.txt", "w", encoding="utf-8") as f:
+                      f.write(text)
+              browser.close()
+          PYEOF
+          python diag.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostico-uefa
+          path: diag_*.txt
+      
