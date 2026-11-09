@@ -16,9 +16,18 @@ const val WINDOW_DAYS = 14L
 data class Ev(
     val sport: String, val title: String, val start: OffsetDateTime,
     val comp: String, val venue: String, val tv: String, val tbc: Boolean,
-    val url: String
+    val url: String, val standing: String, val asof: String
 ) {
     fun isDaughter() = sport == "hija"
+    // La clasificación solo se muestra si es de hoy o de ayer; nunca una antigua
+    fun standingText(): String {
+        if (standing.isBlank() || asof.isBlank()) return ""
+        return try {
+            val d = java.time.LocalDate.parse(asof)
+            val hoy = java.time.LocalDate.now(ZoneId.of("Europe/Madrid"))
+            if (d.isBefore(hoy.minusDays(1))) "" else standing
+        } catch (e: Exception) { "" }
+    }
     fun tag() = when (sport) {
         "barca_m" -> "⚽♂"
         "barca_f" -> "⚽♀"
@@ -46,7 +55,8 @@ object Repo {
                 OffsetDateTime.parse(o.getString("start")),
                 o.optString("comp"), o.optString("venue"),
                 o.optString("tv", ""), o.optBoolean("tbc", false),
-                o.optString("url", "")
+                o.optString("url", ""),
+                o.optString("standing", ""), o.optString("asof", "")
             )
         }
     }

@@ -59,7 +59,8 @@ class MainActivity : Activity() {
                 val place = listOf(e.comp, e.venue).filter { it.isNotBlank() }.joinToString(" · ")
                 val tv = if (e.tv.isBlank()) "" else "\n📺 ${e.tv}"
                 val link = if (e.url.isBlank()) "" else "\n🔗 Ver fuente"
-                r.findViewById<TextView>(R.id.t3).text = place + tv + link
+                val st = e.standingText().let { if (it.isBlank()) "" else "\n$it" }
+                r.findViewById<TextView>(R.id.t3).text = place + tv + st + link
                 return r
             }
         }
