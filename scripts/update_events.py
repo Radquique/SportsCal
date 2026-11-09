@@ -297,6 +297,20 @@ def daughter():
 
 
 # ---------- Barça ----------
+def norm_comp(text, sport):
+    """Unifica el nombre de la competición, venga como venga escrito en la web."""
+    low = text.lower()
+    if "champions" in low:
+        return "Champions League femenina" if sport == "barca_f" else "Champions League"
+    if "copa" in low:
+        return text
+    if sport == "barca_f" and ("liga f" in low or "femenina" in low):
+        return "Liga F"
+    if sport == "barca_m" and "laliga" in low.replace(" ", ""):
+        return "LaLiga"
+    return COMP_NAMES.get(text, text)
+
+
 def fix_team(x):
     x = dedupe(x.strip())
     return TEAM_FIX.get(x, x)
@@ -322,7 +336,7 @@ def laliga(sport):
             dt = datetime(y, mo, d, tzinfo=MAD)
             ev["tbc"] = True
         ev["start"] = dt.isoformat()
-        ev["comp"] = COMP_NAMES.get(cells[3], cells[3])
+        ev["comp"] = norm_comp(cells[3], sport)
         tv = cells[4] if len(cells) > 4 and cells[4] not in ("", "-") else ""
         ev["venue"] = ""
         ev["tv"] = tv.replace(",", ", ").replace(",  ", ", ")
