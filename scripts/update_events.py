@@ -5,7 +5,7 @@ Si una web falla, se conservan los datos anteriores de ese deporte.
 Las clasificaciones se calculan SIEMPRE con la tabla de hoy; si no se pueden leer
 hoy, el partido se guarda sin clasificación (nunca se reutiliza una antigua)."""
 import json, re, sys, unicodedata, urllib.request
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from bs4 import BeautifulSoup
 
@@ -31,6 +31,13 @@ LALIGA_LINK = {
     "barca_m": "https://www.laliga.com/clubes/fc-barcelona/proximos-partidos",
     "barca_f": "https://www.laliga.com/clubes/fc-barcelona-femenino/proximos-partidos",
 }
+# --- Calendario oficial del club: todas las competiciones, con hora peninsular ---
+FCB_URL = {
+    "barca_m": "https://www.fcbarcelona.es/es/futbol/primer-equipo/calendario",
+    "barca_f": "https://www.fcbarcelona.es/es/futbol/femenino/calendario",
+}
+DATE_RE = re.compile(r"^(?:lun|mar|mié|mie|jue|vie|sáb|sab|dom)\s+(\d{1,2})\s+([a-záéíóú]{3})\b", re.I)
+TIME_RE = re.compile(r"^(?:Inicio:\s*)?(\d{1,2}):(\d{2})$")
 # --- Clasificaciones de liga (solo LaLiga y Liga F; copas y Champions no llevan) ---
 STAND_URL = {
     "barca_m": "https://www.laliga.com/en-GB/laliga-easports/standing",
@@ -41,7 +48,7 @@ SEASON = "2026/27"
 
 # --- Champions League (UEFA): la tabla se carga con JavaScript, hace falta un navegador ---
 UEFA_URL = {
-    "barca_m": "https://es.uefa.com/uefachampionsleague/standings/",
+    "barca_m": "https://es.uefa.com/uefachampionsleague/clubs/50080--barcelona/standings/",
     "barca_f": "https://es.uefa.com/womenschampionsleague/standings/",
 }
 UEFA_COMP = {"barca_m": "Champions League", "barca_f": "Champions League femenina"}
@@ -192,7 +199,7 @@ def uefa_table(sport):
 
 
 def add_uefa_standings(sport, evs):
-    targets = [e for e in evs if e["comp"] == UEFA_COMP[sport]]
+    targets = [e for e in evs if e["comp"].startswith(UEFA_COMP[sport])]
     if not targets:
         return
     try:
@@ -229,6 +236,8 @@ def add_league_standings(sport, evs):
         if len(parts) != 2:
             continue
         a, b = find_team(parts[0], rows), find_team(parts[1], rows)
+        if not (a and b):
+            print(f"  sin coincidencia en la tabla: {e['title']}")
         if a and b:
             e["standing"] = standing_text(a, b, note)
             e["asof"] = TODAY.isoformat()
@@ -255,7 +264,17 @@ def daughter_table(soup):
 
 
 def daughter():
-    soup = BeautifulSoup(fetch(DAUGHTER_URL), "lxml")
+    html, last = None, None
+    for intento in range(3):
+        try:
+            html = fetch(DAUGHTER_URL)
+            break
+        except Exception as ex:
+            last = ex
+            print(f"  hija: intento {intento + 1} fallido ({ex})")
+    if html is None:
+        raise last
+    soup = BeautifulSoup(html, "lxml")
     try:
         table = daughter_table(soup)
     except Exception as ex:
@@ -316,7 +335,7 @@ def fix_team(x):
     return TEAM_FIX.get(x, x)
 
 
-def laliga(sport):
+def laliga_next(sport):
     soup = BeautifulSoup(fetch(LALIGA[sport]), "lxml")
     out = []
     for tr in soup.find_all("tr"):
@@ -342,10 +361,81 @@ def laliga(sport):
         ev["tv"] = tv.replace(",", ", ").replace(",  ", ", ")
         ev["url"] = LALIGA_LINK[sport]
         out.append(ev)
-    if out:
-        add_league_standings(sport, out)
-        add_uefa_standings(sport, out)
     return out
+
+
+def fcb_calendar(sport):
+    soup = BeautifulSoup(fetch(FCB_URL[sport]), "lxml")
+    out, seen = [], set()
+    for node in soup.find_all(string=lambda t: t and t.strip() == "vs."):
+        box, strs = node.parent, []
+        for _ in range(8):
+            if box is None:
+                break
+            strs = list(box.stripped_strings)
+            if strs.count("vs.") == 1 and any(DATE_RE.match(t) for t in strs):
+                break
+            box = box.parent
+        else:
+            continue
+        if box is None:
+            continue
+        vs = strs.index("vs.")
+        di = next(i for i, t in enumerate(strs) if DATE_RE.match(t))
+        dm = DATE_RE.match(strs[di])
+        mon = MESES.index(dm.group(2).lower()) + 1 if dm.group(2).lower() in MESES else None
+        if mon is None or vs < 1 or vs + 1 >= len(strs):
+            continue
+        day, home, away = int(dm.group(1)), strs[vs - 1], strs[vs + 1]
+        year = TODAY.year
+        if date(year, mon, day) < TODAY - timedelta(days=60):
+            year += 1
+        tm = next((TIME_RE.match(t) for t in strs if TIME_RE.match(t)), None)
+        middle = [t for t in strs[di + 1:vs - 1]
+                  if not TIME_RE.match(t) and t not in ("Inicio: Por confirmar", "Fecha y hora por anunciarse")]
+        rnd = middle[-2] if len(middle) >= 2 else ""
+        venue = middle[-1] if middle else ""
+        alts = [i.get("alt", "") for i in box.find_all("img")]
+        comp_alt = next((a for a in alts if a and a not in (home, away, "FC Barcelona")), "")
+        comp = norm_comp(comp_alt, sport) if comp_alt else ""
+        jm = re.match(r"Jornada\s+(\d+)", rnd)
+        if comp and jm:
+            comp += f" · J{jm.group(1)}"
+        ev = {"sport": sport, "title": f"{home} – {away}"}
+        if tm:
+            ev["start"] = datetime(year, mon, day, int(tm.group(1)), int(tm.group(2)), tzinfo=MAD).isoformat()
+        else:
+            ev["start"] = datetime(year, mon, day, tzinfo=MAD).isoformat()
+            ev["tbc"] = True
+        ev.update({"comp": comp, "venue": venue, "tv": "", "url": FCB_URL[sport]})
+        key = (ev["start"], ev["title"])
+        if key not in seen:
+            seen.add(key)
+            out.append(ev)
+    return out
+
+
+def barca(sport):
+    """Calendario oficial del club; las cadenas de TV se completan con la web de LaLiga."""
+    try:
+        fcb = fcb_calendar(sport)
+    except Exception as ex:
+        print(f"AVISO: calendario oficial de {sport} no disponible ({ex})")
+        fcb = []
+    try:
+        ll = laliga_next(sport)
+    except Exception as ex:
+        print(f"AVISO: LaLiga {sport} no disponible ({ex})")
+        ll = []
+    print(f"{sport}: calendario oficial {len(fcb)} partidos; LaLiga {len(ll)} partidos")
+    if not fcb:
+        return ll
+    by_day = {e["start"][:10]: e for e in ll}
+    for e in fcb:
+        o = by_day.get(e["start"][:10])
+        if o:
+            e["tv"] = o.get("tv", "")
+    return fcb
 
 
 def merge(old, new_by_sport):
@@ -366,8 +456,8 @@ def main():
     with open(EVENTS, encoding="utf-8") as f:
         old = json.load(f)
     new = {}
-    for sport, fn in (("hija", daughter), ("barca_m", lambda: laliga("barca_m")),
-                      ("barca_f", lambda: laliga("barca_f"))):
+    for sport, fn in (("hija", daughter), ("barca_m", lambda: barca("barca_m")),
+                      ("barca_f", lambda: barca("barca_f"))):
         try:
             evs = fn()
             print(f"{sport}: {len(evs)} eventos")
@@ -377,10 +467,24 @@ def main():
                 print(f"AVISO: {sport} sin eventos; se conservan los datos anteriores")
         except Exception as ex:
             print(f"ERROR en {sport}: {ex}")
+    if "hija" not in new:
+        try:
+            with open("scripts/manual_events.json", encoding="utf-8") as f:
+                manual = [e for e in json.load(f) if e.get("sport") == "hija"]
+        except Exception:
+            manual = []
+        if manual:
+            print(f"hija: la web no responde; se usan {len(manual)} partidos del archivo manual")
+            new["hija"] = manual
     if not new:
         print("No se pudo leer ninguna fuente")
         sys.exit(1)
     merged = merge(old, new)
+    for sport in ("barca_m", "barca_f"):
+        evs = [e for e in merged if e["sport"] == sport]
+        if evs:
+            add_league_standings(sport, evs)
+            add_uefa_standings(sport, evs)
     # Salvaguarda: cualquier clasificación que no sea de hoy se elimina
     for e in merged:
         if e.get("asof") != TODAY.isoformat():
